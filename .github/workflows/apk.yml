@@ -1,0 +1,41 @@
+name: workflow-apk
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+
+  build-mob:
+    runs-on: ubuntu-latest
+    steps: 
+      - name: Atualizar Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.12'
+
+      - name: Atualizar Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: 17
+
+      - name: Atualizar Codigo
+        uses: actions/checkout@v4
+
+      - name: Permissao gradlew
+        run: cd RpiManagerBLE_Client && cd android && chmod +x ./gradlew
+
+      - name: Instalar Dependencias NPM
+        run: |
+          cd RpiManagerBLE_Client && npm install
+
+      - name: Build Android Release
+        run: |
+          cd RpiManagerBLE_Client && cd android && ./gradlew assembleRelease
+          
+      - name: Upload APK
+        uses: actions/upload-artifact@v1
+        with:
+          name: app-release.apk
+          path: RpiManagerBLE_Client/android/app/build/outputs/apk/release/
