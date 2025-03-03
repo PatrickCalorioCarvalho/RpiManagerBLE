@@ -1,0 +1,22 @@
+name: workflow-raspberry
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  Deploy:
+    runs-on: self-hosted
+    steps:
+      - name: Stop Service RpiManagerBLEServer
+        run: sudo systemctl stop RpiManagerBLEServer
+      
+      - name: Atualizar Codigo
+        uses: actions/checkout@v4
+
+      - name: Instalar Dependencias NPM
+        run: |
+          cd RpiManagerBLE_Server && npm install
+
+      - name: Start Service RpiManagerBLEServer
+        run: sudo systemctl start RpiManagerBLEServer
