@@ -23,11 +23,13 @@ const DiskCharacteristicUUID = '69766611-4101-1039-7110-000000000004';
 const IPCharacteristicUUID = '69766611-4101-1039-7110-000000000005';
 const ServiceLedCharacteristicUUID = '69766611-4101-1039-7110-000000000006';
 const ServiceGifCharacteristicUUID = '69766611-4101-1039-7110-000000000007';
+const CPUTempCharacteristicUUID = '69766611-4101-1039-7110-000000000008';
 function App(): React.JSX.Element {
 
   const [isConnect, setIsConnect] = useState<boolean>(false);
   const [Memoria, setMemoria] = useState<number>(0);
   const [CPU, setCPU] = useState<number>(0);
+  const [CPUTemp, setCPUTemp] = useState<number>(0);
   const [HostName, setHostName] = useState<string>('');
   const [Disk, setDisk] = useState<number>(0);
   const [IP, setIP] = useState<string>('');
@@ -63,6 +65,21 @@ function App(): React.JSX.Element {
           }
         }).catch(error=>{
           console.log('Erro ao Ler CPU:',error);
+        });
+      }
+    }
+    async function getCPUTemp() {
+      if(ConnectDevice?.id)
+      {
+        await manager.readCharacteristicForDevice(ConnectDevice?.id,serviceUUID, CPUTempCharacteristicUUID ).then(readData=>{
+          if(readData.value)
+          {
+            var dataCPUTemp  = Buffer.from(readData.value, 'base64').toString('utf8');
+            console.log('CPUTemp',dataCPUTemp);
+            setCPUTemp(Number(dataCPUTemp));
+          }
+        }).catch(error=>{
+          console.log('Erro ao Ler CPUTemp:',error);
         });
       }
     }
@@ -149,11 +166,13 @@ function App(): React.JSX.Element {
     getIP();
     getServiceLed();
     getServiceGif();
+    getCPUTemp();
     const intervalId = setInterval(() => {
       getMemoria();
       getCPU();
       getServiceLed();
       getServiceGif();
+      getCPUTemp();
     }, 5000);
 
     return () => {
@@ -316,7 +335,7 @@ function App(): React.JSX.Element {
               <ColorfulCard
                 style={{
                   height: '100%',
-                  width: '46%',
+                  width: '48%',
                   backgroundColor: '#fe8f61',
                 }}
                 title="Service LED RGB"
@@ -326,7 +345,7 @@ function App(): React.JSX.Element {
                 <ColorfulCard
                 style={{
                   height: '100%',
-                  width: '46%',
+                  width: '48%',
                   backgroundColor: '#fe8f61',
                 }}
                 title="Service GIF OLED"
@@ -346,7 +365,7 @@ function App(): React.JSX.Element {
             justifyContent: 'space-evenly',
           }}>
           <AnimatedCircularProgress
-            size={300}
+            size={280}
             width={40}
             fill={Memoria}
             tintColor="#2bc3ff"
@@ -362,6 +381,21 @@ function App(): React.JSX.Element {
           </AnimatedCircularProgress>
           <AnimatedCircularProgress
             size={300}
+            width={40}
+            fill={CPUTemp}
+            tintColor="#d83b44"
+            backgroundColor="#661d21">
+            {() => (
+              <><Text style={{ fontSize: 30,color:'#661d21' }}>
+                {CPUTemp.toString()}°C
+              </Text>
+              <Text style={{ fontSize: 15,color:'#661d21' }}>
+                Temperatura
+              </Text></>
+            )}
+          </AnimatedCircularProgress>
+          <AnimatedCircularProgress
+            size={280}
             width={40}
             fill={CPU}
             tintColor="#2bc3ff"

@@ -25,6 +25,11 @@ async function GetCPU() {
   return (cpuLoadPercent ? cpuLoadPercent.currentLoad : 0).toFixed(2);
 }
 
+async function GetCPUTemp() {
+  const cpuTemp = await si.cpuTemperature();
+  return (cpuTemp ? cpuTemp.main : 0).toFixed(2);
+}
+
 async function GetFreeDisk() {
   const fsSize = await si.fsSize();
   return (fsSize && fsSize[0] ? (fsSize[0].size - fsSize[0].used) / (1024 ** 3) : 0).toFixed(2);
@@ -57,18 +62,20 @@ async function GetServiceLed() {
 
 async function GetAll() {
   try {
-    const memoriaUsadaPercent = GetMemoria()
-    const cpuUsadaPercent = GetCPU()
-    const espacoLivreGB = GetFreeDisk()
-    const ipAddress = GetIP()
-    const hostname = GetHostName();
-    const servicoGif = GetServiceGif();
-    const servicoLed = GetServiceLed();
+    const memoriaUsadaPercent = await GetMemoria()
+    const cpuUsadaPercent = await GetCPU()
+    const espacoLivreGB = await GetFreeDisk()
+    const ipAddress = await GetIP()
+    const hostname = await GetHostName();
+    const servicoGif = await GetServiceGif();
+    const servicoLed = await GetServiceLed();
+    const cpuTemp = await GetCPUTemp()
 
     const informacoes = {
       memoria_usada_percent: memoriaUsadaPercent,
       cpu_usada_percent: cpuUsadaPercent,
       espaco_livre_GB: espacoLivreGB,
+      cpu_temp: cpuTemp,
       servico_gif: servicoGif,
       servico_led: servicoLed,
       ip: ipAddress,
@@ -83,4 +90,4 @@ async function GetAll() {
   }
 }
 
-module.exports = {GetMemoria,GetCPU,GetFreeDisk,GetIP,GetHostName,GetServiceGif,GetServiceLed,GetAll};
+module.exports = {GetMemoria,GetCPU,GetFreeDisk,GetIP,GetHostName,GetServiceGif,GetServiceLed,GetCPUTemp,GetAll};
