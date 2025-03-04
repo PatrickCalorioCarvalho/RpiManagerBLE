@@ -8,14 +8,15 @@ jobs:
   Deploy:
     runs-on: self-hosted
     steps:
-      - name: Atualizar Codigo
-        uses: actions/checkout@v4
-        
+
       - name: Stop Service RpiManagerBLEServer
         run: sudo systemctl stop RpiManagerBLEServer
       
       - name: Atualizar Codigo
         uses: actions/checkout@v4
+      
+      - name: Permissao sh
+        run: cd RpiManagerBLE_Server && chmod +x ./start.sh
 
       - name: Instalar Dependencias NPM
         run: |
