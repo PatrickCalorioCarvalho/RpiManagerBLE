@@ -18,11 +18,6 @@ Antes de rodar o projeto, certifique-se de ter os seguintes itens instalados:
 - Dispositivo compatível com BLE (para Raspberry Pi)
 - [Outros softwares ou dependências]
 
-
-## Contribuições
-
-Sinta-se à vontade para fazer um fork do repositório, abrir issues ou enviar pull requests.
-
 ## Licença
 
 Este projeto está licenciado sob a Licença MIT - veja o arquivo [LICENSE](LICENSE) para mais detalhes.
